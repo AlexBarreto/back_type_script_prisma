@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+//criar uma migration : yarn prisma migrate dev
+model User {
+  id String @id @default(uuid())
+  nome String 
+  email String
+  senha String 
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@map("users")
+
+  users_address Address[]
+  users_contats Contats[]
+  users_groups Groups[]
+  projects Projects[]
+}
+
+model Address {
+  id String @id @default(uuid())
+  cep String 
+  rua String
+  bairro String 
+  numero String
+  complemento String
+  estado String 
+  cidade String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  users User @relation(fields: [user_id], references: [id])
+
+  @@map("users_address")
+
+  user_id String
+}
+
+model Contats {
+  id String @id @default(uuid())
+  nome String 
+  numero String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  users User @relation(fields: [user_id], references: [id])
+
+  @@map("users_contats")
+
+  user_id String
+}
+
+model Groups {
+
+  id String @id @default(uuid())
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  users User @relation(fields: [user_id], references: [id])
+
+  groupscategory GroupsCategory @relation(fields: [groups_category_id], references: [id])
+
+  @@map("users_groups")
+
+  user_id String
+  groups_category_id String
+
+}
+
+model GroupsCategory {
+  
+  id String @id @default(uuid())
+  nome String 
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@map("users_groups_category")
+
+  users_groups Groups[]
+}
+
+model Projects {
+
+  id String @id @default(uuid())
+  nome String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  users User @relation(fields: [user_id], references: [id])
+  statusprojects StatusProject @relation(fields: [status_projects_id], references: [id])
+
+  @@map("projects")
+
+  status_projects_id String
+  user_id String
+
+}
+
+model StatusProject {
+
+  id String @id @default(uuid())
+  nome String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@map("status_projects")
+
+  user_id String
+  projects Projects[]
+}
+
